@@ -8,7 +8,8 @@ public class PriorityQueueTests
     [TestMethod]
     // Scenario: Add multiple items with different priorities
     // Expected Result: Then dequeue all items
-    // Defect(s) Found: 
+    // Defect(s) Found: Assert.IsTrue failed. Expected and actual priorities did not match
+    // RESULT AFTER IMPLEMENTATION: Passed - Queue correctly returns item with highest priority.
     public void TestPriorityQueue_1()
     {
         // Create a priority queue and enqueue items of different priorities
@@ -31,9 +32,9 @@ public class PriorityQueueTests
     }
 
     [TestMethod]
-    // Scenario: 
-    // Expected Result: 
-    // Defect(s) Found: 
+    // Scenario: Provide multiple items of the same priority
+    // Expected Result: the items will be returned fifo
+    // Defect(s) Found: Assert.IsTrue failed. Repeatedly returns the same item from the queue
     public void TestPriorityQueue_2()
     {
         // Create a priority queue and enqueue items of different priorities
@@ -57,9 +58,9 @@ public class PriorityQueueTests
     }
 
     [TestMethod]
-    // Scenario: 
-    // Expected Result: 
-    // Defect(s) Found:
+    // Scenario: Dequeue an item from an empty queue
+    // Expected Result: an invalid operation exception will be thrown with message "The queue is empty."
+    // Defect(s) Found: None
     public void TestPriorityQueue_3()
     {
         // Create a priority queue and enqueue items of different priorities

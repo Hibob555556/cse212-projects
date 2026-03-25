@@ -1,4 +1,7 @@
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 public static class SetsAndMaps
 {
@@ -21,8 +24,55 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        // 1. add seen words to a set
+
+        // 2. loop through each word
+
+        //     a  if both letters are the same skip
+        //     b. compute reverse
+        //     c. check if reverse exists
+        //         *. if it does add it to result
+
+        // this avoids looping through the array multiple times by storing "seen" words in a set
+        // and checking through them before moving on which allows this function to run at O(n)
+        // in the worst case scenario of no repeated words.
+
+        // helper function to reverse words
+        static string reverseString(string word)
+        {
+            if (string.IsNullOrEmpty(word) || word.Length == 1)
+                return word;
+
+            char[] charArray = word.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
+
+        // helper list to store the result
+        List<string> results = [];
+
+        // step 1, add seen words to hash set
+        HashSet<string> seenWords = [];
+
+        // step 2 loop through each seen word and add duplicates to the 
+        // return result
+        foreach (string word in words)
+        {
+            // skip words that are the same letters
+            if (word[0] == word[1])
+                continue;
+
+            string reverse = reverseString(word);
+            if (seenWords.TryGetValue(reverse, out _))
+            {
+                results.Add($"{word} & {reverse}");
+                continue;
+            }
+
+            seenWords.Add(word);
+        }
+
+        return [.. results];
     }
 
     /// <summary>
@@ -42,7 +92,11 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            string degree = fields[3];
+            if (degrees.TryGetValue(degree, out _))
+                degrees[degree]++;
+            else
+                degrees.Add(degree, 1);
         }
 
         return degrees;
@@ -66,8 +120,41 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        // normalize strings
+        word1 = word1.ToLower().Replace(" ", ""); ;
+        word2 = word2.ToLower().Replace(" ", ""); ;
+
+        // if length differs return false
+        if (word1.Length != word2.Length) return false;
+
+        // create dictionary to store letter occurrences
+        Dictionary<char, int> letters = [];
+
+        // loop through the first word
+        foreach (char c in word1)
+        {
+            if (!letters.TryAdd(c, 1))
+                letters[c] += 1;
+        }
+
+        foreach (char c in word2)
+        {
+            if (!letters.TryAdd(c, 1))
+            {
+                letters[c]--;
+                if (letters[c] < 0)
+                    return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        foreach (var entry in letters)
+            if (entry.Value != 0) return false;
+
+        return true;
     }
 
     /// <summary>
