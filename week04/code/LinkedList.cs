@@ -165,8 +165,6 @@ public class LinkedList : IEnumerable<int>
                 {
                     var previous = curr.Prev;
                     var next = curr.Next;
-                    curr.Next = null;
-                    curr.Prev = null;
                     previous?.Next = next;
                     next?.Prev = previous;
                     return;
