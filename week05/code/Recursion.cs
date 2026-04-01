@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Reflection.Metadata.Ecma335;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 public static class Recursion
 {
@@ -14,8 +16,13 @@ public static class Recursion
     /// </summary>
     public static int SumSquaresRecursive(int n)
     {
-        // TODO Start Problem 1
-        return 0;
+        // terminating case
+        if (n <= 0)
+            return 0;
+        else
+        {
+            return SumSquaresRecursive(n - 1) + n * n;
+        }
     }
 
     /// <summary>
@@ -39,7 +46,20 @@ public static class Recursion
     /// </summary>
     public static void PermutationsChoose(List<string> results, string letters, int size, string word = "")
     {
-        // TODO Start Problem 2
+        if (word.Length == size)
+        {
+            results.Add(word);
+            return;
+        }
+
+        for (int i = 0; i < letters.Length; i++)
+        {
+            string newWord = word + letters[i];
+            string newLetters = letters.Substring(0, i);
+            newLetters += letters.Substring(i + 1, letters.Length - i - 1);
+            PermutationsChoose(results, newLetters, size, newWord);
+        }
+
     }
 
     /// <summary>
@@ -97,9 +117,14 @@ public static class Recursion
             return 4;
 
         // TODO Start Problem 3
+        remember ??= [];
+
+        if (remember.TryGetValue(s, out decimal o))
+            return o;
 
         // Solve using recursion
-        decimal ways = CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) + CountWaysToClimb(s - 3);
+        decimal ways = CountWaysToClimb(s - 1, remember) + CountWaysToClimb(s - 2, remember) + CountWaysToClimb(s - 3, remember);
+        remember.Add(s, ways);
         return ways;
     }
 
@@ -118,7 +143,30 @@ public static class Recursion
     /// </summary>
     public static void WildcardBinary(string pattern, List<string> results)
     {
-        // TODO Start Problem 4
+        // the pattern does not have any 
+        if (!pattern.Contains('*'))
+        {
+            results.Add(pattern);
+            return;
+        }
+
+        // this will run if there is a wildcard present
+
+        // get the index of the first wildcard
+        int firstWildcardIndex = pattern.IndexOf('*');
+        int afterWildcardIndex = firstWildcardIndex + 1;
+
+        // get the left and right sides of the wildcard
+        string left = pattern[..firstWildcardIndex];
+        string right = pattern[afterWildcardIndex..];
+
+        // create a string for each possibility 
+        string resultOne = left + '0' + right;
+        string resultTwo = left + '1' + right;
+
+        // continue iterating over that string
+        WildcardBinary(resultOne, results);
+        WildcardBinary(resultTwo, results);
     }
 
     /// <summary>
@@ -129,15 +177,45 @@ public static class Recursion
     {
         // If this is the first time running the function, then we need
         // to initialize the currPath list.
-        if (currPath == null) {
+        if (currPath == null)
+        {
             currPath = new List<ValueTuple<int, int>>();
         }
-        
-        // currPath.Add((1,2)); // Use this syntax to add to the current path
 
-        // TODO Start Problem 5
-        // ADD CODE HERE
+        currPath.Add((x, y)); // Use this syntax to add to the current path
 
-        // results.Add(currPath.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
+        if (maze.IsEnd(x, y))
+        {
+            results.Add(currPath.AsString());
+            return;
+        }
+
+        if (maze.IsValidMove(currPath, x + 1, y))
+        {
+            List<ValueTuple<int, int>> movePath = [];
+            movePath.AddRange(currPath);
+            SolveMaze(results, maze, x + 1, y, movePath);
+        }
+
+        if (maze.IsValidMove(currPath, x - 1, y))
+        {
+            List<ValueTuple<int, int>> movePath = [];
+            movePath.AddRange(currPath);
+            SolveMaze(results, maze, x - 1, y, movePath);
+        }
+
+        if (maze.IsValidMove(currPath, x, y + 1))
+        {
+            List<ValueTuple<int, int>> movePath = [];
+            movePath.AddRange(currPath);
+            SolveMaze(results, maze, x, y + 1, movePath);
+        }
+
+        if (maze.IsValidMove(currPath, x, y - 1))
+        {
+            List<ValueTuple<int, int>> movePath = [];
+            movePath.AddRange(currPath);
+            SolveMaze(results, maze, x, y - 1, movePath);
+        }
     }
 }
